@@ -1,9 +1,9 @@
 import time
+import datetime
 
 import requests
 import json
 from kafka import KafkaProducer
-
 
 # Categories and Keywords
 categories_and_seed_keywords = [
@@ -21,17 +21,16 @@ categories_and_seed_keywords = [
 ]
 
 # Set up Kafka producer
-KAFKA_TOPIC = 'seo_keywords_topic'
-producer = KafkaProducer(bootstrap_servers='172.31.253.254:9092',
+KAFKA_TOPIC = 'seo_keywords'
+producer = KafkaProducer(bootstrap_servers='172.31.253.152:9092',
                          value_serializer=lambda v: json.dumps(v).encode('utf-8'))
 
 # API credentials
-API_TOKEN = ''
+API_TOKEN = 'WyQYrXhweD-9Ff9dzva1'
 RELATED_KW_URL = f"https://api.keyword.io/related_keywords?api_token={API_TOKEN}&"
 
 
-def keywords_data():
-
+def extract_keywords_data():
     for category in categories_and_seed_keywords:
 
         print(f"Getting keywords of category {category[0]}")
@@ -57,13 +56,18 @@ def keywords_data():
             'category_name': category[0],
             'keywords': list_keywords
         }
+        print(message)
         print("sending message to kafka...")
 
-        producer.send(KAFKA_TOPIC, message)
+        producer.send(KAFKA_TOPIC, json.dumps(message))
+
+        #print("saving keywords list to json file...")
+        #file = open(f"data/{str(datetime.datetime.now().month)}{datetime.datetime.now().day}{datetime.datetime.now().hour}_{category[0]}.json", "w+")
+        #file.write(json.dumps(list_keywords, indent=4))
 
         print("waiting for 30 seconds")
 
         time.sleep(30)
+        #file.close()
 
     producer.close()
-
