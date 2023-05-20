@@ -26,7 +26,7 @@ producer = KafkaProducer(bootstrap_servers='172.31.253.152:9092',
                          value_serializer=lambda v: json.dumps(v).encode('utf-8'))
 
 # API credentials
-API_TOKEN = 'WyQYrXhweD-9Ff9dzva1'
+API_TOKEN = ''
 RELATED_KW_URL = f"https://api.keyword.io/related_keywords?api_token={API_TOKEN}&"
 
 
